@@ -14,7 +14,6 @@ class Party(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     host = db.Column(db.String, nullable=False)
     location = db.Column(db.String, nullable=False)
-    photoURL = db.Column(db.String, nullable=False)
     dateTime = db.Column(db.String, nullable=False)
     users = db.relationship(
                     "User",
@@ -25,7 +24,6 @@ class Party(db.Model):
     def __init__(self, **kwargs):
         self.host = kwargs.get("host")
         self.location = kwargs.get("location")
-        self.photoURL = kwargs.get("photoURL")
         self.dateTime = kwargs.get("dateTime")
         self.users = kwargs.get("attendees")
 
@@ -34,7 +32,6 @@ class Party(db.Model):
             "id": self.id,
             "host":self.host,
             "location":self.location,
-            "photoURL":self.photoURL,
             "dateTime":self.dateTime,
             "attendees":[user.sub_serialize() for user in self.users]
         }
@@ -43,7 +40,6 @@ class Party(db.Model):
             "id": self.id,
             "host":self.host,
             "location":self.location,
-            "photoURL":self.photoURL,
             "dateTime":self.dateTime
         }
 
@@ -52,7 +48,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
-    photoURL = db.Column(db.String, nullable=False)
+    photo = db.relationship("Img", cascade="delete")
     age = db.Column(db.String, nullable=False)
     parties = db.relationship(
         "Party",
@@ -63,7 +59,6 @@ class User(db.Model):
     def __init__(self, **kwargs):
         self.name = kwargs.get("name")
         self.email = kwargs.get("email")
-        self.photoURL = kwargs.get("photoURL")
         self.age = kwargs.get("age")
 
     def serialize(self):
@@ -71,6 +66,7 @@ class User(db.Model):
             "id":self.id,
             "name":self.name,
             "email":self.email,
+            "photo": self.photo,
             "age":self.age,
             "parties":[party.sub_serialize() for party in self.parties]
         }
@@ -80,4 +76,28 @@ class User(db.Model):
             "name":self.name,
             "email":self.email,
             "age":self.age
+        }
+    
+    def serialize_img_id(self):
+        return {
+            "photo": [i.serialize_id() for i in self.photo]
+        }
+        
+class Img(db.Model):
+    __tablename__ = "image"
+    id = db.Column(db.Integer, primary_key=True)
+    img = db.Column(db.Text, unique=True, nullable=False)
+    name = db.Column(db.Text, nullable=False)
+    mimetype = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    
+    def __init__(self, **kwargs):
+        self.img = kwargs.get("img")
+        self.name = kwargs.get("name")
+        self.mimetype = kwargs.get("mimetype")
+        self.user_id = kwargs.get("usre_id")
+    
+    def serialize_id(self):
+        return {
+            "id": self.id
         }
