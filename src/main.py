@@ -41,7 +41,6 @@ def host_party():
     location = body.get("location")
     photoURL = body.get("photoURL")
     dateTime = body.get("dateTime")
-    attendees = []
     if not (body or host or location or photoURL or dateTime):
         return failure_response("The request is badly formatted.", 400)
     new_party = Party(
@@ -72,15 +71,12 @@ def add_user():
     name = body.get("name")
     email = body.get("email")
     photoURL = body.get("photoURL")
-    age = body.get("age")
-    parties = []
-    if  not (name or email or photoURL or age):
+    if  not (name or email or photoURL):
         return failure_response("The request is badly formatted.", 400)
     new_user = User(
         name=name,
         email=email,
         photoURL=photoURL,
-        age=age,
         parties = []
     )
     db.session.add(new_user)
