@@ -142,7 +142,7 @@ def get_user_by_email():
         return failure_response(f"User with email {email} does not exist!")
     return success_response(user.serialize(), 200)
 
-@app.route("api/user/delete/", methods=["DELETE"])
+@app.route("/api/user/delete/", methods=["DELETE"])
 def delete_user_by_email():
     body = json.loads(request.data)
     email = body.get("email")
