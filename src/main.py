@@ -155,7 +155,7 @@ def delete_user_by_email():
     db.session.commit()
     return success_response(user.serialize())
 
-@app.route("api/party/<int:party_id/delete/", methods=["DELETE"])
+@app.route("/api/party/<int:party_id>/delete/", methods=["DELETE"])
 def delete_party_by_id(party_id):
     party = Party.query.filter_by(party_id=party_id).first()
     if not party:
