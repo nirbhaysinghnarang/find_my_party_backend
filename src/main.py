@@ -41,7 +41,6 @@ def host_party():
     location = body.get("location")
     photoURL = body.get("photoURL")
     dateTime = body.get("dateTime")
-    attendees = []
     if not (body or host or location or photoURL or dateTime):
         return failure_response("The request is badly formatted.", 400)
     new_party = Party(
@@ -72,15 +71,12 @@ def add_user():
     name = body.get("name")
     email = body.get("email")
     photoURL = body.get("photoURL")
-    age = body.get("age")
-    parties = []
-    if  not (name or email or photoURL or age):
+    if  not (name or email or photoURL):
         return failure_response("The request is badly formatted.", 400)
     new_user = User(
         name=name,
         email=email,
         photoURL=photoURL,
-        age=age,
         parties = []
     )
     db.session.add(new_user)
@@ -105,6 +101,7 @@ def attend_party(party_id):
     if not id:
         return failure_response(f"The request is badly formatted.")
     user = User.query.filter_by(id=id).first()
+    user_id = user.serialize().get("id")
     if not user:
         return failure_response(f"User with ID {user_id} does not exist!")
     party = Party.query.filter_by(id=party_id).first()
@@ -134,7 +131,39 @@ def get_parties(user_id):
     parties = user.serialize()["parties"]
     return success_response(parties, 200)
 
+@app.route("/api/user/email/")
+def get_user_by_email():
+    body = json.loads(request.data)
+    email = body.get("email")
+    if not email:
+        return failure_response("No email provided")
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return failure_response(f"User with email {email} does not exist!")
+    return success_response(user.serialize(), 200)
 
+@app.route("/api/user/delete/", methods=["DELETE"])
+def delete_user_by_email():
+    body = json.loads(request.data)
+    email = body.get("email")
+    if not email:
+        return failure_response("No email provided")
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return failure_response(f"User with email {email} does not exist!")
+    db.session.delete(user)
+    db.session.commit()
+    return success_response(user.serialize())
+
+@app.route("/api/party/<int:party_id>/delete/", methods=["DELETE"])
+def delete_party_by_id(party_id):
+    party = Party.query.filter_by(party_id=party_id).first()
+    if not party:
+        return failure_response(f"Party with id {party_id} does not exist!")
+    db.session.delete(party)
+    db.session.commit()
+    return success_response(party.serialize())
+    
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

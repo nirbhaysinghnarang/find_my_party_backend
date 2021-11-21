@@ -16,6 +16,7 @@ class Party(db.Model):
     location = db.Column(db.String, nullable=False)
     photoURL = db.Column(db.String, nullable=False)
     dateTime = db.Column(db.String, nullable=False)
+    theme = db.Column(db.String, nullable=False)
     users = db.relationship(
                     "User",
                     secondary=association_table,
@@ -28,6 +29,7 @@ class Party(db.Model):
         self.photoURL = kwargs.get("photoURL")
         self.dateTime = kwargs.get("dateTime")
         self.users = kwargs.get("attendees")
+        self.theme = kwargs.get("theme")
 
     def serialize(self):
         return {
@@ -36,6 +38,7 @@ class Party(db.Model):
             "location":self.location,
             "photoURL":self.photoURL,
             "dateTime":self.dateTime,
+            "theme": self.theme,
             "attendees":[user.sub_serialize() for user in self.users]
         }
     def sub_serialize(self):
@@ -44,7 +47,8 @@ class Party(db.Model):
             "host":self.host,
             "location":self.location,
             "photoURL":self.photoURL,
-            "dateTime":self.dateTime
+            "dateTime":self.dateTime,
+            "theme": self.theme
         }
 
 class User(db.Model):
@@ -53,7 +57,6 @@ class User(db.Model):
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
     photoURL = db.Column(db.String, nullable=False)
-    age = db.Column(db.String, nullable=False)
     parties = db.relationship(
         "Party",
         secondary=association_table,
@@ -64,14 +67,12 @@ class User(db.Model):
         self.name = kwargs.get("name")
         self.email = kwargs.get("email")
         self.photoURL = kwargs.get("photoURL")
-        self.age = kwargs.get("age")
 
     def serialize(self):
         return {
             "id":self.id,
             "name":self.name,
             "email":self.email,
-            "age":self.age,
             "parties":[party.sub_serialize() for party in self.parties]
         }
     def sub_serialize(self):
@@ -79,5 +80,4 @@ class User(db.Model):
             "id":self.id,
             "name":self.name,
             "email":self.email,
-            "age":self.age
         }
