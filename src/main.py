@@ -41,6 +41,7 @@ def host_party():
     location = body.get("location")
     photoURL = body.get("photoURL")
     dateTime = body.get("dateTime")
+    theme = body.get("theme")
     if not (body or host or location or photoURL or dateTime):
         return failure_response("The request is badly formatted.", 400)
     new_party = Party(
@@ -48,6 +49,7 @@ def host_party():
         location=location,
         photoURL=photoURL,
         dateTime=dateTime,
+        theme=theme,
         attendees=[]
     )
     print(new_party)
