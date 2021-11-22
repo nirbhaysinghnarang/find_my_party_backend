@@ -41,6 +41,7 @@ def host_party():
     location = body.get("location")
     photoURL = body.get("photoURL")
     dateTime = body.get("dateTime")
+    theme = body.get("theme")
     if not (body or host or location or photoURL or dateTime):
         return failure_response("The request is badly formatted.", 400)
     new_party = Party(
@@ -48,6 +49,7 @@ def host_party():
         location=location,
         photoURL=photoURL,
         dateTime=dateTime,
+        theme=theme,
         attendees=[]
     )
     print(new_party)
@@ -86,7 +88,7 @@ def add_user():
         201
     )
 
-@app.route("/api/user/<int:user_id>")
+@app.route("/api/user/<int:user_id>/")
 def get_user_by_id(user_id):
     user = User.query.filter_by(id=user_id).first()
     if not user:
@@ -155,11 +157,11 @@ def delete_user_by_email():
     db.session.commit()
     return success_response(user.serialize())
 
-@app.route("/api/party/<int:party_id>/delete/", methods=["DELETE"])
-def delete_party_by_id(party_id):
-    party = Party.query.filter_by(party_id=party_id).first()
+@app.route("/api/party/<int:id>/delete/", methods=["DELETE"])
+def delete_party_by_id(id):
+    party = Party.query.filter_by(id=id).first()
     if not party:
-        return failure_response(f"Party with id {party_id} does not exist!")
+        return failure_response(f"Party with id {id} does not exist!")
     db.session.delete(party)
     db.session.commit()
     return success_response(party.serialize())
