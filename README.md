@@ -1,7 +1,7 @@
 Backend written in Flask for Find My Party.
 Team Submission for Cornell AppDev HackChallenge 2021.
 
-Deployed on (https://findmyparty.herokuapp.com)
+Deployed on (https://findmypartyhck1.herokuapp.com)
 
 Routes:
 
