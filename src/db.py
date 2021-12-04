@@ -73,6 +73,7 @@ class User(db.Model):
             "id":self.id,
             "name":self.name,
             "email":self.email,
+            "photoURL":self.photoURL,
             "parties":[party.sub_serialize() for party in self.parties]
         }
     def sub_serialize(self):
@@ -80,4 +81,5 @@ class User(db.Model):
             "id":self.id,
             "name":self.name,
             "email":self.email,
+            "photoURL":self.photoURL,
         }

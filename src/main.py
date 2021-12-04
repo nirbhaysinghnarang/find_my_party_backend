@@ -88,7 +88,7 @@ def add_user():
         201
     )
 
-@app.route("/api/user/<int:user_id>")
+@app.route("/api/user/<int:user_id>/")
 def get_user_by_id(user_id):
     user = User.query.filter_by(id=user_id).first()
     if not user:
@@ -103,9 +103,8 @@ def attend_party(party_id):
     if not id:
         return failure_response(f"The request is badly formatted.")
     user = User.query.filter_by(id=id).first()
-    user_id = user.serialize().get("id")
     if not user:
-        return failure_response(f"User with ID {user_id} does not exist!")
+        return failure_response(f"User with ID {id} does not exist!")
     party = Party.query.filter_by(id=party_id).first()
     if not party:
         failure_response(f"Party with ID {party_id} does not exist!")
@@ -133,7 +132,7 @@ def get_parties(user_id):
     parties = user.serialize()["parties"]
     return success_response(parties, 200)
 
-@app.route("/api/user/email/")
+@app.route("/api/user/email/", methods=['POST'])
 def get_user_by_email():
     body = json.loads(request.data)
     email = body.get("email")
@@ -157,15 +156,15 @@ def delete_user_by_email():
     db.session.commit()
     return success_response(user.serialize())
 
-@app.route("/api/party/<int:party_id>/delete/", methods=["DELETE"])
-def delete_party_by_id(party_id):
-    party = Party.query.filter_by(party_id=party_id).first()
+@app.route("/api/party/<int:id>/delete/", methods=["DELETE"])
+def delete_party_by_id(id):
+    party = Party.query.filter_by(id=id).first()
     if not party:
-        return failure_response(f"Party with id {party_id} does not exist!")
+        return failure_response(f"Party with id {id} does not exist!")
     db.session.delete(party)
     db.session.commit()
     return success_response(party.serialize())
-    
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
