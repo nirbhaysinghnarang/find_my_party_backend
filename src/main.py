@@ -103,9 +103,8 @@ def attend_party(party_id):
     if not id:
         return failure_response(f"The request is badly formatted.")
     user = User.query.filter_by(id=id).first()
-    user_id = user.serialize().get("id")
     if not user:
-        return failure_response(f"User with ID {user_id} does not exist!")
+        return failure_response(f"User with ID {id} does not exist!")
     party = Party.query.filter_by(id=party_id).first()
     if not party:
         failure_response(f"Party with ID {party_id} does not exist!")
@@ -133,7 +132,7 @@ def get_parties(user_id):
     parties = user.serialize()["parties"]
     return success_response(parties, 200)
 
-@app.route("/api/user/email/")
+@app.route("/api/user/email/", methods=['POST'])
 def get_user_by_email():
     body = json.loads(request.data)
     email = body.get("email")
