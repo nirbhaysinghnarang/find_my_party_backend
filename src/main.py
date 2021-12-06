@@ -164,7 +164,7 @@ def delete_party_by_id(id):
     db.session.delete(party)
     db.session.commit()
     return success_response(party.serialize())
-    
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
